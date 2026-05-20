@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>とみの人生OS マップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E0F13;--bg2:#15161C;--bg3:#1C1E27;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);--text:#E8E9F0;--text2:#9B9DB0;--text3:#5C5E72;--green:#2DD4A0;--green-bg:rgba(45,212,160,0.1);--red:#F06B6B;--red-bg:rgba(240,107,107,0.1);--amber:#F0B429;--amber-bg:rgba(240,180,41,0.1);--blue:#6B9FF0;--blue-bg:rgba(107,159,240,0.1);--purple:#A78BFA;--purple-bg:rgba(167,139,250,0.1);--r:12px;--rs:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh}
+.nav{position:sticky;top:0;z-index:100;background:rgba(14,15,19,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 12px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.nav-inner{display:inline-flex;gap:2px;padding:8px 0}
+.nb{font-size:11px;padding:6px 13px;border-radius:20px;border:1px solid transparent;cursor:pointer;color:var(--text2);background:transparent;font-family:inherit;transition:all .2s;white-space:nowrap}
+.nb.active{background:var(--text);color:var(--bg);font-weight:500}
+.nb:hover:not(.active){border-color:var(--border2);color:var(--text)}
+.panel{display:none;padding:14px;max-width:880px;margin:0 auto}
+.panel.active{display:block;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.sec{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:0 0 10px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:9px}
+.card-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.card-title{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.acc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.acc-head{display:flex;align-items:center;gap:8px;padding:11px 13px;cursor:pointer;transition:background .15s;user-select:none}
+.acc-head:hover{background:var(--bg3)}
+.acc-title{font-size:12px;font-weight:500;color:var(--text);flex:1}
+.chev{font-size:11px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+.chev.open{transform:rotate(90deg)}
+.acc-body{display:none;border-top:1px solid var(--border);padding:10px 13px}
+.acc-body.open{display:block}
+.item{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--text);line-height:1.5}
+.item:last-child{border-bottom:none}
+.item-note{font-size:10px;color:var(--text2);margin-top:1px}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;flex-shrink:0;white-space:nowrap;margin-top:1px}
+.tm{background:var(--red-bg);color:var(--red);border:1px solid rgba(240,107,107,0.25)}
+.tt{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(240,180,41,0.25)}
+.ta{background:var(--green-bg);color:var(--green);border:1px solid rgba(45,212,160,0.25)}
+.tp{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(107,159,240,0.25)}
+.tu{background:rgba(255,255,255,0.05);color:var(--text2);border:1px solid var(--border2)}
+.lv{font-size:10px;font-weight:500;padding:2px 6px;border-radius:4px;flex-shrink:0;min-width:30px;text-align:center}
+.lv1{background:rgba(240,107,107,0.15);color:#F4A0A0}
+.lv2{background:rgba(240,180,41,0.15);color:#F0C87A}
+.lv3{background:rgba(107,159,240,0.15);color:#A0C0F4}
+.lv4{background:rgba(167,139,250,0.15);color:#C4B0FC}
+.lv5{background:rgba(45,212,160,0.15);color:#7DDFC0}
+.chip-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.chip{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;transition:all .15s}
+.chip.active{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3)}
+.chip .n{font-size:10px;color:var(--text3);margin-left:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.bar-wrap{display:flex;flex-direction:column;gap:5px}
+.bar-row{display:flex;align-items:center;gap:8px}
+.bar-label{font-size:11px;color:var(--text2);width:115px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-size:10px;color:var(--text3);width:20px;text-align:right}
+.loop-row{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:6px}
+.ln{font-size:11px;padding:4px 8px;border-radius:5px;border:1px solid}
+.la{font-size:12px;color:var(--text3);padding:0 3px;flex-shrink:0}
+.loop-bad .ln{background:var(--red-bg);color:var(--red);border-color:rgba(240,107,107,0.3)}
+.loop-good .ln{background:var(--green-bg);color:var(--green);border-color:rgba(45,212,160,0.3)}
+.fg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+@media(max-width:640px){.fg{grid-template-columns:repeat(3,1fr)}}
+.fc{padding:9px 7px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg3);text-align:center}
+.fi{font-size:17px;margin-bottom:3px}
+.fn{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px}
+.fq{font-size:10px;color:var(--text2);line-height:1.4}
+.lr{display:flex;align-items:stretch;gap:0;margin-bottom:4px}
+.lt{width:76px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:7px 3px;border-radius:var(--rs) 0 0 var(--rs);border:1px solid var(--border);font-size:10px;font-weight:500;text-align:center;line-height:1.3}
+.lc{flex:1;display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:7px 9px;border:1px solid var(--border);border-left:none;border-radius:0 var(--rs) var(--rs) 0;background:var(--bg2)}
+.l0t{background:var(--purple-bg);color:var(--purple);border-color:rgba(167,139,250,0.3)}
+.l1t{background:var(--green-bg);color:var(--green);border-color:rgba(45,212,160,0.3)}
+.l2t{background:var(--amber-bg);color:var(--amber);border-color:rgba(240,180,41,0.3)}
+.l3t{background:var(--red-bg);color:var(--red);border-color:rgba(240,107,107,0.3)}
+.l4t{background:var(--blue-bg);color:var(--blue);border-color:rgba(107,159,240,0.3)}
+.l5t{background:var(--green-bg);color:var(--green);border-color:rgba(45,212,160,0.2)}
+.c0{background:var(--purple-bg);color:var(--purple);border-color:rgba(167,139,250,0.3)}
+.c1{background:var(--green-bg);color:var(--green);border-color:rgba(45,212,160,0.3)}
+.c2{background:var(--amber-bg);color:var(--amber);border-color:rgba(240,180,41,0.3)}
+.c3{background:var(--red-bg);color:var(--red);border-color:rgba(240,107,107,0.3)}
+.c4{background:var(--blue-bg);color:var(--blue);border-color:rgba(107,159,240,0.3)}
+.arr{text-align:center;color:var(--text3);font-size:13px;padding:2px 0;margin-bottom:3px}
+.gg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:500px){.gg{grid-template-columns:1fr}}
+.gs{padding:11px;border-radius:var(--rs);border:1px solid}
+.gb{background:var(--red-bg);border-color:rgba(240,107,107,0.25)}
+.gg2{background:var(--green-bg);border-color:rgba(45,212,160,0.25)}
+.gt{font-size:11px;font-weight:500;margin-bottom:5px}
+.gb .gt{color:var(--red)}.gg2 .gt{color:var(--green)}
+.gi{font-size:11px;padding:2px 0;display:flex;gap:4px;line-height:1.4}
+.gb .gi{color:rgba(240,107,107,0.85)}.gg2 .gi{color:rgba(45,212,160,0.85)}
+.tr{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.tl,.tri{flex:1;font-size:11px;padding:4px 8px;border-radius:5px;line-height:1.4}
+.tl{background:var(--green-bg);color:var(--green);text-align:right;border:1px solid rgba(45,212,160,0.2)}
+.tri{background:var(--red-bg);color:var(--red);border:1px solid rgba(240,107,107,0.2)}
+.tvs{font-size:10px;color:var(--text3);flex-shrink:0}
+.leg{display:flex;gap:10px;flex-wrap:wrap;padding:9px 0;border-top:1px solid var(--border);margin-top:7px}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.ph{border:1px solid var(--border);border-radius:var(--r);margin-bottom:7px;overflow:hidden}
+.ph-h{display:flex;align-items:center;gap:8px;padding:10px 13px;cursor:pointer;transition:background .15s;user-select:none}
+.ph-h:hover{background:var(--bg3)}
+.ph-t{font-size:12px;font-weight:500;color:var(--text);flex:1}
+.ph-b{display:none;border-top:1px solid var(--border);padding:10px 13px;background:var(--bg2)}
+.ph-b.open{display:block}
+.p1{border-left:3px solid var(--purple)}.p2{border-left:3px solid var(--green)}
+.p3{border-left:3px solid var(--amber)}.p4{border-left:3px solid var(--red)}.p5{border-left:3px solid var(--blue)}
+.fo{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}
+.foc{padding:7px 9px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3)}
+.fol{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px}
+.foa{font-size:10px;color:var(--text2)}
+.rg{margin-bottom:11px}
+.rl{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.ri{font-size:11px;color:var(--text);padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:6px;line-height:1.5}
+.ri:last-child{border-bottom:none}
+.sr{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}
+.sc{padding:9px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg2);text-align:center}
+.sn{font-size:21px;font-weight:700}.sl{font-size:10px;color:var(--text2);margin-top:2px}
+.ir{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.ir:last-child{border-bottom:none}
+.it{font-size:12px;color:var(--text);flex:1;line-height:1.5}
+.it .sub{color:var(--text2);font-size:11px}
+.tb{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;margin-bottom:9px}
+.tt2{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.trow{display:flex;gap:7px;padding:2px 0;font-size:11px}
+.tk{font-weight:500;color:var(--text);min-width:68px;flex-shrink:0}
+.tv{color:var(--text2);flex:1;line-height:1.5}
+.sl2{display:flex;flex-direction:column;gap:5px}
+.sr2{display:flex;align-items:center;gap:7px}
+.sl2-l{font-size:11px;color:var(--text2);width:105px;flex-shrink:0;text-align:right}
+.sb{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.sf{height:100%;border-radius:2px;background:var(--green)}
+.sv{font-size:10px;color:var(--text3);width:18px;text-align:right}
+.mg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:7px}
+.mb{padding:6px 8px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3)}
+.ml{font-size:10px;color:var(--text3);margin-bottom:2px}
+.mv{font-size:12px;color:var(--text)}
+.pl{display:flex;flex-direction:column;gap:4px;margin-bottom:7px}
+.pr{display:flex;align-items:flex-start;gap:6px;padding:5px 7px;border-radius:6px;background:var(--bg3);border:1px solid var(--border)}
+.fd{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.fh{background:var(--red)}.fm{background:var(--amber)}.fl{background:var(--green)}
+.pt{font-size:11px;color:var(--text);flex:1;line-height:1.4}
+.ds{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin:7px 0 4px}
+.cr{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+.ct{font-size:11px;padding:2px 7px;border-radius:4px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(107,159,240,0.25)}
+.solrow{display:flex;flex-wrap:wrap;gap:4px}
+.st{font-size:11px;padding:2px 7px;border-radius:4px;background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.os-h{text-align:center;padding:20px 14px 14px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.os-core{display:inline-block;font-size:13px;font-weight:500;color:var(--purple);background:var(--purple-bg);border:1px solid rgba(167,139,250,0.3);border-radius:20px;padding:7px 18px;margin-bottom:10px}
+.os-sub-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.os-sub{font-size:11px;padding:3px 10px;border-radius:14px;border:1px solid var(--border2);color:var(--text2);background:var(--bg3)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="nb active" onclick="show('os',this)">人生OS</button>
+    <button class="nb" onclick="show('logic',this)">ロジックツリー</button>
+    <button class="nb" onclick="show('wa',this)">仕事分析</button>
+    <button class="nb" onclick="show('cl',this)">CLフロー</button>
+    <button class="nb" onclick="show('tri',this)">タスク仕分け</button>
+    <button class="nb" onclick="show('int',this)">統合マップ</button>
+    <button class="nb" onclick="show('ff',this)">フォローフロー</button>
+    <button class="nb" onclick="show('ru',this)">人生ルール</button>
+  </div>
+</nav>
+
+<!-- ① 人生OS -->
+<div id="panel-os" class="panel active">
+  <div class="os-h">
+    <div class="os-core">「安心して愛されながら、自立したい」（98）</div>
+    <div class="os-sub-row">
+      <span class="os-sub">自分を好きになりたい（92）</span>
+      <span class="os-sub">成長したい（90）</span>
+      <span class="os-sub">ご機嫌でいたい（88）</span>
+      <span class="os-sub">美しくありたい（84）</span>
+      <span class="os-sub">理解されたい（82）</span>
+    </div>
+  </div>
+  <div class="acc p1">
+    <div class="acc-head" onclick="toggleAcc(this,'os-d','os-chips','anxiety')">
+      <span style="font-size:15px">🧠</span><span class="acc-title">① 内面（OS）</span><span class="chev">▶</span>
+    </div>
+    <div class="acc-body" id="os-d-body">
+      <div class="chip-row" id="os-chips">
+        <div class="chip active" onclick="selTheme('os','anxiety',this)">不安</div>
+        <div class="chip" onclick="selTheme('os','selfesteem',this)">自己肯定感</div>
+        <div class="chip" onclick="selTheme('os','ideal',this)">理想像</div>
+        <div class="chip" onclick="selTheme('os','perfectionism',this)">完璧主義</div>
+        <div class="chip" onclick="selTheme('os','values',this)">価値観・軸</div>
+      </div>
+      <div id="os-d"></div>
+    </div>
+  </div>
+  <div class="acc p2">
+    <div class="acc-head" onclick="toggleAcc(this,'body-d','body-chips','sleep')">
+      <span style="font-size:15px">⚡</span><span class="acc-title">② 身体（コンディション）</span><span class="chev">▶</span>
+    </div>
+    <div class="acc-body" id="body-d-body">
+      <div class="chip-row" id="body-chips">
+        <div class="chip active" onclick="selTheme('body','sleep',this)">睡眠</div>
+        <div class="chip" onclick="selTheme('body','fatigue',this)">疲労・回復</div>
+        <div class="chip" onclick="selTheme('body','exercise',this)">運動</div>
+      </div>
+      <div id="body-d"></div>
+    </div>
+  </div>
+  <div class="acc p5">
+    <div class="acc-head" onclick="toggleAcc(this,'rel-d','rel-chips','romance')">
+      <span style="font-size:15px">💞</span><span class="acc-title">③ 人間関係</span><span class="chev">▶</span>
+    </div>
+    <div class="acc-body" id="rel-d-body">
+      <div class="chip-row" id="rel-chips">
+        <div class="chip active" onclick="selTheme('rel','romance',this)">恋愛</div>
+        <div class="chip" onclick="selTheme('rel','boundary',this)">境界線</div>
+        <div class="chip" onclick="selTheme('rel','work_rel',this)">職場関係</div>
+      </div>
+      <div id="rel-d"></div>
+    </div>
+  </div>
+  <div class="acc p3">
+    <div class="acc-head" onclick="toggleAcc(this,'work-d','work-chips','task')">
+      <span style="font-size:15px">🚀</span><span class="acc-title">④ 成長・仕事</span><span class="chev">▶</span>
+    </div>
+    <div class="acc-body" id="work-d-body">
+      <div class="chip-row" id="work-chips">
+        <div class="chip active" onclick="selTheme('work','task',this)">タスク管理</div>
+        <div class="chip" onclick="selTheme('work','sales',this)">営業・成果</div>
+        <div class="chip" onclick="selTheme('work','career',this)">キャリア</div>
+      </div>
+      <div id="work-d"></div>
+    </div>
+  </div>
+  <div class="acc p4">
+    <div class="acc-head" onclick="toggleAcc(this,null,null,null)">
+      <span style="font-size:15px">🏠</span><span class="acc-title">⑤ 環境・生活</span><span class="chev">▶</span>
+    </div>
+    <div class="acc-body">
+      <div class="chip-row"><div class="chip active">ルーティン</div><div class="chip">スケジュール</div><div class="chip">部屋・空間</div><div class="chip">モノ整理</div></div>
+      <div class="ds">解決策</div>
+      <div class="solrow"><span class="st">朝夕タスクブロック</span><span class="st">5層カレンダー</span><span class="st">GAS自動化</span><span class="st">ルーティンタイマー</span></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:11px">
+    <div class="sec" style="margin-bottom:9px">思考エネルギー分布</div>
+    <div class="bar-wrap">
+      <div class="bar-row"><div class="bar-label">恋愛・人間関係</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--red)"></div></div><div class="bar-val">98</div></div>
+      <div class="bar-row"><div class="bar-label">自己肯定感・内面</div><div class="bar-track"><div class="bar-fill" style="width:98%;background:var(--red)"></div></div><div class="bar-val">96</div></div>
+      <div class="bar-row"><div class="bar-label">身体・コンディション</div><div class="bar-track"><div class="bar-fill" style="width:97%;background:var(--green)"></div></div><div class="bar-val">95</div></div>
+      <div class="bar-row"><div class="bar-label">思考特性・環境</div><div class="bar-track"><div class="bar-fill" style="width:95%;background:var(--purple)"></div></div><div class="bar-val">93</div></div>
+      <div class="bar-row"><div class="bar-label">美・女性性</div><div class="bar-track"><div class="bar-fill" style="width:89%;background:var(--amber)"></div></div><div class="bar-val">87</div></div>
+      <div class="bar-row"><div class="bar-label">仕事・キャリア</div><div class="bar-track"><div class="bar-fill" style="width:86%;background:var(--blue)"></div></div><div class="bar-val">84</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec" style="margin-bottom:9px">因果ループ</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:5px">崩れるループ</div>
+    <div class="loop-row loop-bad"><div class="ln">睡眠不足</div><div class="la">→</div><div class="ln">不安増加</div><div class="la">→</div><div class="ln">恋愛思考過多</div><div class="la">→</div><div class="ln">自己否定</div><div class="la">→</div><div class="ln">生活リズム崩壊</div><div class="la">↻</div></div>
+    <div style="font-size:11px;color:var(--text2);margin:9px 0 5px">安定ループ</div>
+    <div class="loop-row loop-good"><div class="ln">睡眠安定</div><div class="la">→</div><div class="ln">運動</div><div class="la">→</div><div class="ln">自己肯定感上昇</div><div class="la">→</div><div class="ln">仕事集中</div><div class="la">→</div><div class="ln">自分軸安定</div><div class="la">→</div><div class="ln">恋愛安定</div><div class="la">↻</div></div>
+  </div>
+</div>
+
+<!-- ② ロジックツリー -->
+<div id="panel-logic" class="panel">
+  <div class="sec">人生の全構造（L0〜L5）</div>
+  <div class="lr"><div class="lt l0t">L0 核</div><div class="lc"><span class="chip c0">安心して愛されながら自立したい（98）</span><span class="chip c0">自分を好きになりたい（92）</span><span class="chip c0">成長したい（90）</span></div></div>
+  <div class="arr">↓</div>
+  <div class="lr"><div class="lt l1t">L1 領域</div><div class="lc"><span class="chip c1">身体（95）</span><span class="chip c1">恋愛（98）</span><span class="chip c1">内面（96）</span><span class="chip c1">仕事（84）</span><span class="chip c1">環境（93）</span></div></div>
+  <div class="arr">↓</div>
+  <div class="lr"><div class="lt l2t">L2 テーマ</div><div class="lc"><span class="chip c2">睡眠（90）</span><span class="chip c2">恋愛不安（90）</span><span class="chip c2">自己価値（92）</span><span class="chip c2">タスク管理（72）</span><span class="chip c2">境界線（70）</span></div></div>
+  <div class="arr">↓</div>
+  <div class="lr"><div class="lt l3t">L3 問題</div><div class="lc"><span class="chip c3">寝不足（38）</span><span class="chip c3">愛されてるかわからない（28）</span><span class="chip c3">考えすぎ（18）</span><span class="chip c3">タスク散乱</span><span class="chip c3">着手できない</span></div></div>
+  <div class="arr">↓</div>
+  <div class="lr"><div class="lt l4t">L4 判断<br>フィルター</div><div class="lc"><span class="chip c4">心（思考）</span><span class="chip c4">人付き合い</span><span class="chip c4">モノ・環境</span><span class="chip c4">お金</span><span class="chip c4">不安</span></div></div>
+  <div class="arr">↓</div>
+  <div class="lr"><div class="lt l5t">L5 行動</div><div class="lc"><span class="chip c1">GAS自動化</span><span class="chip c1">5層カレンダー</span><span class="chip c1">睡眠ブロック</span><span class="chip c1">Garmin連携</span><span class="chip c1">ジャーナリング</span></div></div>
+  <div class="card" style="margin-top:13px">
+    <div class="sec" style="margin-bottom:9px">L4 判断フィルター — 迷ったときのレンズ</div>
+    <div class="fg">
+      <div class="fc"><div class="fi">🧠</div><div class="fn">心・思考</div><div class="fq">これは感情？<br>事実？</div></div>
+      <div class="fc"><div class="fi">👥</div><div class="fn">人付き合い</div><div class="fq">誰が関係してる？<br>境界線は？</div></div>
+      <div class="fc"><div class="fi">📦</div><div class="fn">モノ・環境</div><div class="fq">ツール・空間の<br>問題？</div></div>
+      <div class="fc"><div class="fi">💰</div><div class="fn">お金</div><div class="fq">コスト・収入の<br>問題？</div></div>
+      <div class="fc"><div class="fi">⚡</div><div class="fn">不安</div><div class="fq">エネルギー<br>消費量は？</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 仕事分析 -->
+<div id="panel-wa" class="panel">
+  <div class="tb">
+    <div class="tt2">言語分析データから見えるとみの営業人格</div>
+    <div class="trow"><div class="tk">核心欲求</div><div class="tv">感覚ではなくシステムで再現性を作りたい設計者タイプ</div></div>
+    <div class="trow"><div class="tk">強み</div><div class="tv">深掘り×肯定スタート×振り返り。ヒアリング型クローザー。</div></div>
+    <div class="trow"><div class="tk">消耗</div><div class="tv">センサーの鋭さがエネルギー消耗につながる</div></div>
+    <div class="trow"><div class="tk">解決方向</div><div class="tv">仕組みで「考えなくていい状態」を作る</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--green);width:8px;height:8px;border-radius:2px"></div><span class="card-title">強み指標</span></div>
+      <div class="sl2">
+        <div class="sr2"><div class="sl2-l">体験設計</div><div class="sb"><div class="sf" style="width:100%"></div></div><div class="sv">29</div></div>
+        <div class="sr2"><div class="sl2-l">整理・構造化</div><div class="sb"><div class="sf" style="width:83%"></div></div><div class="sv">24</div></div>
+        <div class="sr2"><div class="sl2-l">意識・メタ認知</div><div class="sb"><div class="sf" style="width:52%"></div></div><div class="sv">15</div></div>
+        <div class="sr2"><div class="sl2-l">深掘り・傾聴</div><div class="sb"><div class="sf" style="width:45%"></div></div><div class="sv">13</div></div>
+        <div class="sr2"><div class="sl2-l">肯定・承認</div><div class="sb"><div class="sf" style="width:41%"></div></div><div class="sv">12</div></div>
+        <div class="sr2"><div class="sl2-l">振り返り・分析</div><div class="sb"><div class="sf" style="width:34%"></div></div><div class="sv">10</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="dot" style="background:var(--red);width:8px;height:8px;border-radius:2px"></div><span class="card-title">消耗パターン</span></div>
+      <div class="ir"><div class="it">振り回される（5回）<div class="sub">センサーが鋭すぎて他者感情を拾いすぎる</div></div></div>
+      <div class="ir"><div class="it">うざい・気まずい（3回）<div class="sub">自分の発言がノイズか過剰チェック</div></div></div>
+      <div class="ir"><div class="it">悩む（28回）<div class="sub">実行前の思考ループが長い</div></div></div>
+      <div class="ir"><div class="it">不安（14回）<div class="sub">顧客への共鳴×自分のパンク警戒</div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><span class="card-title">内部テンション（強みが消耗も生む構造）</span></div>
+    <div class="tr"><div class="tl">深掘り・ヒアリング重視</div><div class="tvs">↔</div><div class="tri">振り回される・ブレる</div></div>
+    <div class="tr"><div class="tl">高い基準・もったいない意識</div><div class="tvs">↔</div><div class="tri">悩む・思考ループが長い</div></div>
+    <div class="tr"><div class="tl">仕組み化・型への欲求</div><div class="tvs">↔</div><div class="tri">ADHD特性・ワーキングメモリ</div></div>
+    <div class="tr"><div class="tl">肯定・承認スタンス</div><div class="tvs">↔</div><div class="tri">うざいと思われないか不安</div></div>
+  </div>
+</div>
+
+<!-- ④ CLフロー -->
+<div id="panel-cl" class="panel">
+  <div class="tb">
+    <div class="tt2">CLフロー思考特性</div>
+    <div class="trow"><div class="tk">核心欲求</div><div class="tv">再現性のある仕組みで勝ちたい。根性論ではなく型で動きたい。</div></div>
+    <div class="trow"><div class="tk">解決方向</div><div class="tv">「考えなくていい状態」を仕組みで作る。判断はゼロに。</div></div>
+  </div>
+  <div class="ph p1"><div class="ph-h" onclick="tPh(this)"><span style="font-size:14px">📞</span><span class="ph-t">Ph1 — 事前準備</span><span class="chev">▶</span></div>
+    <div class="ph-b"><div class="item"><span class="tag tp">体験前完結</span><div>事前架電・ヒアリング・ニーズ喚起（SPIN）→テストCL</div></div><div class="item"><span class="tag ta">自動化可</span><div>架電記録フォーマット自動生成<div class="item-note">顧客名入力→シート生成</div></div></div><div class="item"><span class="tag tp">体験前完結</span><div>戦略MTG：仮説・役割・着地目標</div></div></div>
+  </div>
+  <div class="ph p2"><div class="ph-h" onclick="tPh(this)"><span style="font-size:14px">🏫</span><span class="ph-t">Ph2 — 体験当日・授業前〜中</span><span class="chev">▶</span></div>
+    <div class="ph-b"><div class="item"><span class="tag tp">体験前完結</span><div>環境・ツール準備（チェックリスト確認のみ）</div></div><div class="item"><span class="tag tm">当日必須</span><div>CLヒアリング：SPIN・現状と理想整理</div></div><div class="item"><span class="tag tm">当日必須</span><div>実施者連携（30分後）＋テストCL</div></div></div>
+  </div>
+  <div class="ph p3"><div class="ph-h" onclick="tPh(this)"><span style="font-size:14px">🎯</span><span class="ph-t">Ph3 — 本クロージング</span><span class="chev">▶</span></div>
+    <div class="ph-b"><div class="item"><span class="tag tm">当日必須</span><div>作品FB・アセスメント・プランニング</div></div><div class="item"><span class="tag tm">当日必須</span><div>最適コマ2択・ネック確認・解消</div></div><div class="item"><span class="tag tm">当日必須</span><div>最終意思決定・次回接点の約束</div></div></div>
+  </div>
+  <div class="ph p4"><div class="ph-h" onclick="tPh(this)"><span style="font-size:14px">📄</span><span class="ph-t">Ph4 — 事後事務（一番しんどいフェーズ）</span><span class="chev open">▶</span></div>
+    <div class="ph-b open"><div class="item"><span class="tag tm">当日必須</span><div>CLメール送信<div class="item-note">→ テンプレ3種（入塾/再体験/見送り）で文章を考えない</div></div></div><div class="item"><span class="tag tm">当日必須</span><div>SF更新：ステータス・約束時間<div class="item-note">→ 3項目フォーマットで最小化</div></div></div><div class="item"><span class="tag tt">翌朝でいい</span><div>資料整理・インテークシート添付・研修記入</div></div><div class="item"><span class="tag tm">当日必須</span><div>営業推進報告<div class="item-note">→ 追客メモの3項目をそのままコピー</div></div></div></div>
+  </div>
+  <div class="ph p5"><div class="ph-h" onclick="tPh(this)"><span style="font-size:14px">✅</span><span class="ph-t">Ph5 — 追客・着地確定</span><span class="chev">▶</span></div>
+    <div class="ph-b"><div class="item"><span class="tag tm">当日必須</span><div>当日夜TEL・最終ネック・着地決定</div></div><div class="item"><span class="tag tm">当日必須</span><div>着地別メール（テンプレ即送信）・SF再更新</div></div><div class="item"><span class="tag ta">自動化可</span><div>翌日フォロータスク＆カレンダー自動生成<div class="item-note">4択→GASが配置。いつ帰れるかが確定する。</div></div></div><div class="item"><span class="tag ta">自動化可</span><div>不通時の架電カウント自動管理（最大4回）</div></div><div class="item"><span class="tag tt">翌朝でいい</span><div>入塾時：契約準備・Comiru更新・教室引き継ぎ</div></div></div>
+  </div>
+  <div class="leg">
+    <div class="li"><span class="ld" style="background:var(--red)"></span>当日中に必須</div>
+    <div class="li"><span class="ld" style="background:var(--amber)"></span>翌朝でいい</div>
+    <div class="li"><span class="ld" style="background:var(--green)"></span>自動化できる</div>
+    <div class="li"><span class="ld" style="background:var(--blue)"></span>体験前に完結</div>
+  </div>
+</div>
+
+<!-- ⑤ タスク仕分け -->
+<div id="panel-tri" class="panel">
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div class="card-head"><span class="card-title" style="color:var(--red)">当日中に必須</span><span style="font-size:11px;color:var(--text3);margin-left:auto">7タスク</span></div>
+    <div class="item"><span class="tag tm">Ph3</span><div>CLメール送信（お礼＋次回アクション）<div class="item-note">翌日では遅い</div></div></div>
+    <div class="item"><span class="tag tm">Ph3</span><div>SFステータス更新・約束時間メモ</div></div>
+    <div class="item"><span class="tag tm">Ph5</span><div>当日夜の追客TEL</div></div>
+    <div class="item"><span class="tag tm">Ph5</span><div>着地確定後のメール送信・SF再更新</div></div>
+    <div class="item"><span class="tag tm">Ph3</span><div>営業推進へのCL後報告</div></div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--amber)">
+    <div class="card-head"><span class="card-title" style="color:var(--amber)">翌朝でいい</span><span style="font-size:11px;color:var(--text3);margin-left:auto">4タスク</span></div>
+    <div class="item"><span class="tag tt">Ph3</span><div>インテークシート添付・資料整理</div></div>
+    <div class="item"><span class="tag tt">Ph3</span><div>CL・体験実施者研修記入</div></div>
+    <div class="item"><span class="tag tt">Ph5</span><div>入塾時：契約準備・Comiru更新・教室引き継ぎ</div></div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--green)">
+    <div class="card-head"><span class="card-title" style="color:var(--green)">自動化できる</span><span style="font-size:11px;color:var(--text3);margin-left:auto">5タスク</span></div>
+    <div class="item"><span class="tag ta">自動</span><div>CLメール生成（着地別テンプレ3種）</div></div>
+    <div class="item"><span class="tag ta">自動</span><div>翌日フォロータスクのカレンダー生成</div></div>
+    <div class="item"><span class="tag ta">自動</span><div>不通時の架電カウント管理</div></div>
+    <div class="item"><span class="tag ta">自動</span><div>7:30朝サマリーメール送信</div></div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--text3)">
+    <div class="card-head"><span class="card-title">判断できないもの（要確認）</span></div>
+    <div class="item"><span class="tag tu">要確認</span><div>Comiru更新のタイミング<div class="item-note">当日必須？翌朝でいい？</div></div></div>
+    <div class="item"><span class="tag tu">要確認</span><div>営業推進報告の頻度・フォーマット</div></div>
+    <div class="item"><span class="tag tu">要確認</span><div>複数体験日の優先順位ルール<div class="item-note">2〜3件ある日、どの順で追客する？</div></div></div>
+  </div>
+  <div class="sr">
+    <div class="sc"><div class="sn" style="color:var(--red)">7</div><div class="sl">当日中に必須</div></div>
+    <div class="sc"><div class="sn" style="color:var(--amber)">4</div><div class="sl">翌朝でいい</div></div>
+    <div class="sc"><div class="sn" style="color:var(--green)">5</div><div class="sl">自動化できる</div></div>
+  </div>
+</div>
+
+<!-- ⑥ 統合マップ -->
+<div id="panel-int" class="panel">
+  <div class="chip-row" id="int-tabs">
+    <div class="chip active" onclick="showInt('iw',this)">仕事業務の分類</div>
+    <div class="chip" onclick="showInt('ig',this)">伸ばす・やめる</div>
+    <div class="chip" onclick="showInt('ir',this)">頼る設計</div>
+    <div class="chip" onclick="showInt('iu',this)">諦めていいこと</div>
+  </div>
+  <div id="iw">
+    <div class="card" style="border-left:3px solid var(--green)">
+      <div class="card-head"><span class="card-title" style="color:var(--green)">増やすべき業務（強みが直結）</span></div>
+      <div class="item"><span class="tag ta">継続</span><div>CLヒアリング・SPIN深掘り<div class="item-note">最大の強みが出る場面</div></div></div>
+      <div class="item"><span class="tag ta">継続</span><div>体験設計・再体験の接点づくり</div></div>
+      <div class="item"><span class="tag ta">継続</span><div>振り返り・ログ分析・型化</div></div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red)">
+      <div class="card-head"><span class="card-title" style="color:var(--red)">減らすべき業務</span></div>
+      <div class="item"><span class="tag tt">削減</span><div>資料整理を当日やること<div class="item-note">翌朝に移動するだけで消耗が減る</div></div></div>
+      <div class="item"><span class="tag tt">削減</span><div>メール文章を毎回考えること</div></div>
+      <div class="item"><span class="tag tt">削減</span><div>架電タイミングを毎回判断すること</div></div>
+    </div>
+  </div>
+  <div id="ig" style="display:none">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-head"><span class="card-title" style="color:var(--green)">伸ばすこと（主軸）</span></div>
+        <div class="item"><div class="dot" style="background:var(--green)"></div><div>人との関係構築・対話</div></div>
+        <div class="item"><div class="dot" style="background:var(--green)"></div><div>相手を安心させる力</div></div>
+        <div class="item"><div class="dot" style="background:var(--green)"></div><div>行動力・運動</div></div>
+        <div class="item"><div class="dot" style="background:var(--green)"></div><div>構造化・AI活用</div></div>
+        <div class="item"><div class="dot" style="background:var(--green)"></div><div>感情の言語化・成長</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title" style="color:var(--red)">やめること</span></div>
+        <div class="item"><div class="dot" style="background:var(--red)"></div><div>全員に好かれようとする</div></div>
+        <div class="item"><div class="dot" style="background:var(--red)"></div><div>不安な時の恋愛分析</div></div>
+        <div class="item"><div class="dot" style="background:var(--red)"></div><div>限界まで我慢</div></div>
+        <div class="item"><div class="dot" style="background:var(--red)"></div><div>完璧主義・一人で全部整理</div></div>
+        <div class="item"><div class="dot" style="background:var(--red)"></div><div>睡眠削って頑張る</div></div>
+      </div>
+    </div>
+  </div>
+  <div id="ir" style="display:none">
+    <div class="card">
+      <div class="card-head"><span class="card-title" style="color:var(--blue)">頼っていいもの</span></div>
+      <div class="item"><span class="tag tp">思考整理</span><div>AI・Notion・Mapify</div></div>
+      <div class="item"><span class="tag tp">タスク管理</span><div>GAS・Gカレンダー・チェックリスト</div></div>
+      <div class="item"><span class="tag tp">感情整理</span><div>信頼できる友達・ジャーナリング</div></div>
+      <div class="item"><span class="tag tp">苦手作業</span><div>人に確認・テンプレに任せる</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title" style="color:var(--purple)">自分で持つもの</span></div>
+      <div class="item"><div class="dot" style="background:var(--purple)"></div><div>最終意思決定</div></div>
+      <div class="item"><div class="dot" style="background:var(--purple)"></div><div>倫理観・大事にしたい価値観</div></div>
+      <div class="item"><div class="dot" style="background:var(--purple)"></div><div>「どう生きたいか」</div></div>
+    </div>
+  </div>
+  <div id="iu" style="display:none">
+    <div class="gg">
+      <div class="gs gb">
+        <div class="gt">諦めていいこと</div>
+        <div class="gi"><div>✕</div><div>完璧な管理</div></div>
+        <div class="gi"><div>✕</div><div>ミスゼロ</div></div>
+        <div class="gi"><div>✕</div><div>常に安定</div></div>
+        <div class="gi"><div>✕</div><div>全員に理解されること</div></div>
+        <div class="gi"><div>✕</div><div>普通の人っぽさ</div></div>
+      </div>
+      <div class="gs gg2">
+        <div class="gt">代わりに目指すもの</div>
+        <div class="gi"><div>○</div><div>回復できること</div></div>
+        <div class="gi"><div>○</div><div>崩れても戻れること</div></div>
+        <div class="gi"><div>○</div><div>助けを使えること</div></div>
+        <div class="gi"><div>○</div><div>自分を責めすぎないこと</div></div>
+        <div class="gi"><div>○</div><div>自分に合う戦い方</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑦ フォローフロー -->
+<div id="panel-ff" class="panel">
+  <div class="card" style="border-left:3px solid var(--green)">
+    <div class="card-head"><span class="card-title" style="color:var(--green)">フェーズ1 — 自動取得（体験当日夜）</span></div>
+    <div class="item"><span class="tag ta">自動</span><div>SFデータ → スプレッドシートに自動出力</div></div>
+    <div class="item"><span class="tag ta">自動</span><div>GASがタスクと架電時間を自動生成<div class="item-note">架電ウィンドウ（12〜13時・18〜20時）に自動配置。1件30分計算。</div></div></div>
+    <div class="item"><span class="tag ta">自動</span><div>Googleカレンダーに自動ブロック<div class="item-note">「何時に帰れるか」が前日夜に確定して見える</div></div></div>
+  </div>
+  <div style="text-align:center;color:var(--text3);padding:4px 0">↓</div>
+  <div class="card" style="border-left:3px solid var(--blue)">
+    <div class="card-head"><span class="card-title" style="color:var(--blue)">フェーズ2 — 朝の確認（7:30 Gmailサマリー）</span></div>
+    <div class="item"><span class="tag ta">自動</span><div>今日やること・順番・終了予定時刻が届く</div></div>
+    <div class="item"><span class="tag tm">あなた</span><div>確認するだけ。変更があればカレンダーをずらす。</div></div>
+  </div>
+  <div style="text-align:center;color:var(--text3);padding:4px 0">↓</div>
+  <div class="card" style="border-left:3px solid var(--amber)">
+    <div class="card-head"><span class="card-title" style="color:var(--amber)">フェーズ3 — 実行（4択で次が決まる）</span></div>
+    <div class="fo">
+      <div class="foc"><div class="fol">入塾</div><div class="foa">→ 契約手続きタスク自動生成</div></div>
+      <div class="foc"><div class="fol">検討中</div><div class="foa">→ 3日後フォロー自動スケジュール</div></div>
+      <div class="foc"><div class="fol">再体験</div><div class="foa">→ 再体験日程調整タスク生成</div></div>
+      <div class="foc"><div class="fol">見送り</div><div class="foa">→ クローズ処理・記録のみ</div></div>
+    </div>
+    <div class="item"><span class="tag tm">あなた</span><div>4択を選ぶだけ。次に何をすべきかは考えなくていい。</div></div>
+  </div>
+  <div style="text-align:center;color:var(--text3);padding:4px 0">↓</div>
+  <div class="card" style="border-left:3px solid var(--green)">
+    <div class="card-head"><span class="card-title" style="color:var(--green)">フェーズ4 — 完了・見通し確定</span></div>
+    <div class="item"><div class="dot fh"></div><div>「今日いつ帰れるか」が朝に確定している</div></div>
+    <div class="item"><div class="dot fh"></div><div>架電判断がゼロになる</div></div>
+    <div class="item"><div class="dot fm"></div><div>疲れた状態でも仕組みが動く</div></div>
+  </div>
+</div>
+
+<!-- ⑧ 人生ルール -->
+<div id="panel-ru" class="panel">
+  <div class="card">
+    <div class="card-head"><span class="card-title" style="color:var(--purple)">とみの人生ルール</span></div>
+    <div class="rg"><div class="rl">心</div><div class="ri"><div class="dot" style="background:var(--purple)"></div>不安な時は即判断しない</div><div class="ri"><div class="dot" style="background:var(--purple)"></div>感情と事実を分ける</div><div class="ri"><div class="dot" style="background:var(--purple)"></div>0か100で受け取らない</div></div>
+    <div class="rg"><div class="rl">体</div><div class="ri"><div class="dot" style="background:var(--green)"></div>睡眠を削って頑張らない</div><div class="ri"><div class="dot" style="background:var(--green)"></div>予定を詰め込みすぎない</div><div class="ri"><div class="dot" style="background:var(--green)"></div>疲れたら休むを許可する</div></div>
+    <div class="rg"><div class="rl">人</div><div class="ri"><div class="dot" style="background:var(--blue)"></div>我慢して好かれにいかない</div><div class="ri"><div class="dot" style="background:var(--blue)"></div>境界線を持つ</div><div class="ri"><div class="dot" style="background:var(--blue)"></div>「安心できる人」を優先する</div></div>
+    <div class="rg"><div class="rl">生活</div><div class="ri"><div class="dot" style="background:var(--amber)"></div>頭の中で管理しない・必ず外部化</div><div class="ri"><div class="dot" style="background:var(--amber)"></div>仕組みで解決する</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><span class="card-title">判断フィルター（迷ったとき）</span></div>
+    <div class="rg">
+      <div class="ri"><span style="color:var(--purple);font-weight:500;min-width:75px">心・思考</span>これは感情？それとも事実？</div>
+      <div class="ri"><span style="color:var(--blue);font-weight:500;min-width:75px">人付き合い</span>誰が関係してる？境界線は？</div>
+      <div class="ri"><span style="color:var(--amber);font-weight:500;min-width:75px">モノ・環境</span>ツール・空間・仕組みの問題？</div>
+      <div class="ri"><span style="color:var(--green);font-weight:500;min-width:75px">お金</span>コスト・収入の問題？</div>
+      <div class="ri"><span style="color:var(--red);font-weight:500;min-width:75px">不安</span>今のエネルギー消費量は？即判断しない。</div>
+    </div>
+  </div>
+  <div class="gg">
+    <div class="gs gb"><div class="gt">諦めていいこと</div><div class="gi"><div>✕</div><div>完璧な管理</div></div><div class="gi"><div>✕</div><div>ミスゼロ・常に安定</div></div><div class="gi"><div>✕</div><div>全員に理解されること</div></div><div class="gi"><div>✕</div><div>普通の人っぽさ</div></div></div>
+    <div class="gs gg2"><div class="gt">代わりに目指すもの</div><div class="gi"><div>○</div><div>回復できること</div></div><div class="gi"><div>○</div><div>崩れても戻れること</div></div><div class="gi"><div>○</div><div>助けを使えること</div></div><div class="gi"><div>○</div><div>自分に合う戦い方</div></div></div>
+  </div>
+</div>
+
+<script>
+const DATA={
+  os:{
+    anxiety:{freq:'高',energy:'高',cause:'内面OS',connects:['身体','人間関係','環境'],problems:[{lv:'lv1',text:'なんか不安・漠然とした恐れ',f:'high'},{lv:'lv2',text:'LINEが減って愛されてるかわからない',f:'high'},{lv:'lv3',text:'愛情確認を恋愛や他者に依存している',f:'mid'},{lv:'lv4',text:'自己価値が外部（他者評価）に依存している',f:'mid'},{lv:'lv5',text:'睡眠確保＋自己承認＋境界線の分離で解消可能',f:'low'}],sols:['ジャーナリング','自己承認ワーク','事実と感情を分ける','睡眠確保']},
+    selfesteem:{freq:'高',energy:'高',cause:'内面OS',connects:['人間関係','仕事'],problems:[{lv:'lv2',text:'比較して落ち込む',f:'high'},{lv:'lv3',text:'成果＝自分の価値と直結している',f:'mid'},{lv:'lv4',text:'外部評価依存パターン',f:'low'},{lv:'lv5',text:'「存在価値」と「成果価値」を構造分離する',f:'low'}],sols:['成功記録','自分軸リスト','毎日1肯定']},
+    ideal:{freq:'中',energy:'中',cause:'内面OS',connects:['仕事','環境'],problems:[{lv:'lv1',text:'こんな自分じゃいけないと感じる',f:'mid'},{lv:'lv3',text:'理想と現在地のギャップが大きすぎる',f:'mid'},{lv:'lv5',text:'理想を具体的行動レベルまで分解する',f:'low'}],sols:['未来自分像を書く','ギャップ分解','30分タスク化']},
+    perfectionism:{freq:'高',energy:'高',cause:'内面OS',connects:['身体','仕事'],problems:[{lv:'lv2',text:'やり始められない・着手ブロック',f:'high'},{lv:'lv3',text:'完璧でないと価値がないと思っている',f:'mid'},{lv:'lv5',text:'「完了＞完璧」ルールを設定する',f:'low'}],sols:['60%ルール','タイムボックス','小さく始める']},
+    values:{freq:'低',energy:'高',cause:'内面OS',connects:['仕事','人間関係'],problems:[{lv:'lv2',text:'何が本当にしたいかわからない',f:'mid'},{lv:'lv3',text:'他人の価値観で判断している',f:'mid'},{lv:'lv5',text:'価値観リストで判断軸を外付け化する',f:'low'}],sols:['価値観カード','判断基準リスト','ジャーナリング']},
+  },
+  body:{
+    sleep:{freq:'高',energy:'高',cause:'身体',connects:['内面','仕事','環境'],problems:[{lv:'lv2',text:'寝不足で感情が不安定になる',f:'high'},{lv:'lv2',text:'夜更かし→翌日やる気ゼロのループ',f:'high'},{lv:'lv3',text:'睡眠不足が情緒・判断力・意欲すべてに影響',f:'mid'},{lv:'lv5',text:'Garminスコア×就寝時刻ルーティンで管理',f:'low'}],sols:['固定就寝時刻','Garmin連携','夕タスクブロック']},
+    fatigue:{freq:'高',energy:'高',cause:'身体+環境',connects:['仕事','内面'],problems:[{lv:'lv2',text:'業務後に何もできない',f:'high'},{lv:'lv3',text:'回復時間がスケジュールに組み込まれていない',f:'mid'},{lv:'lv5',text:'体験後タスクを自動化し意思決定コストを下げる',f:'low'}],sols:['GASで自動タスク生成','朝夕ブロック設定','Body Battery閾値管理']},
+    exercise:{freq:'中',energy:'中',cause:'身体',connects:['内面','環境'],problems:[{lv:'lv2',text:'やろうと思ってもできない',f:'mid'},{lv:'lv5',text:'Garmin Body Batteryでタイミング管理',f:'low'}],sols:['Garmin連携','最小ルーティン化','5分から始める']},
+  },
+  rel:{
+    romance:{freq:'高',energy:'最高',cause:'内面+人間関係',connects:['内面（不安）','環境'],problems:[{lv:'lv1',text:'不安でLINEを何度も確認する',f:'high'},{lv:'lv3',text:'安心感を相手の行動で求めている',f:'mid'},{lv:'lv4',text:'自己価値が相手の態度に連動している',f:'low'},{lv:'lv5',text:'自己承認＋期待値の言語化＋睡眠確保のセット',f:'low'}],sols:['不安を書き出す','期待値を言語化','睡眠先に確保']},
+    boundary:{freq:'高',energy:'高',cause:'内面+人間関係',connects:['内面','仕事'],problems:[{lv:'lv2',text:'Noが言えずに引き受けすぎる',f:'high'},{lv:'lv3',text:'自分のニーズより他者ニーズを優先する構造',f:'mid'},{lv:'lv5',text:'断りテンプレ＋許容量の可視化',f:'low'}],sols:['断りテンプレ','週次タスク量チェック','優先順位の外付け化']},
+    work_rel:{freq:'中',energy:'中',cause:'人間関係+仕事',connects:['仕事','内面'],problems:[{lv:'lv2',text:'上司・同僚との摩擦で消耗する',f:'mid'},{lv:'lv5',text:'事実と感情を分離してから行動を決める',f:'low'}],sols:['事実・感情・行動を分ける','コミュニケーション記録']},
+  },
+  work:{
+    task:{freq:'高',energy:'高',cause:'環境+仕事',connects:['身体（疲労）','内面'],problems:[{lv:'lv2',text:'タスクが頭の中に散らばる',f:'high'},{lv:'lv2',text:'優先順位が毎回一からの判断になる',f:'high'},{lv:'lv3',text:'タスク管理の構造自体が存在しない',f:'mid'},{lv:'lv5',text:'GAS+Gカレンダー+自動優先順位システム',f:'low'}],sols:['GAS自動化','Gカレンダー5層設計','朝タスクブロック']},
+    sales:{freq:'高',energy:'高',cause:'仕事',connects:['内面（自己肯定感）','身体（疲労）'],problems:[{lv:'lv2',text:'体験後のフォローが抜け漏れる',f:'high'},{lv:'lv2',text:'疲れた日に架電判断ができない',f:'high'},{lv:'lv5',text:'GASで自動タスク生成→カレンダー同期',f:'low'}],sols:['GAS自動化','架電ウィンドウ固定','体験後4択フロー']},
+    career:{freq:'中',energy:'高',cause:'仕事+内面',connects:['内面（理想像）','お金'],problems:[{lv:'lv2',text:'今の仕事を続けるか迷う',f:'mid'},{lv:'lv3',text:'キャリア軸が言語化されていない',f:'mid'},{lv:'lv5',text:'価値観×強み×市場でキャリアを設計',f:'low'}],sols:['強み棚卸し','価値観リスト','3年後設計']},
+  }
+};
+
+function renderD(d,tid){
+  const fc={high:'fh',mid:'fm',low:'fl'};
+  const con=d.connects.map(c=>`<span class="ct">${c}</span>`).join('');
+  const probs=d.problems.map(p=>`<div class="pr"><span class="lv ${p.lv}">Lv${p.lv.replace('lv','')}</span><span class="fd ${fc[p.f]}"></span><span class="pt">${p.text}</span></div>`).join('');
+  const sols=d.sols.map(s=>`<span class="st">${s}</span>`).join('');
+  document.getElementById(tid).innerHTML=`<div class="mg"><div class="mb"><div class="ml">思考頻度</div><div class="mv">${d.freq}</div></div><div class="mb"><div class="ml">感情エネルギー</div><div class="mv">${d.energy}</div></div><div class="mb"><div class="ml">発生階層</div><div class="mv">${d.cause}</div></div></div><div class="ds">他カテゴリとの接続</div><div class="cr">${con}</div><div class="ds">具体問題（思考粒度付き）</div><div class="pl">${probs}</div><div class="ds">解決策</div><div class="solrow">${sols}</div>`;
+}
+
+function toggleAcc(head,did,cid,defaultTheme){
+  const bodyId=head.closest('.acc').querySelector('.acc-body').id||head.nextElementSibling;
+  const body=head.nextElementSibling;
+  const chev=head.querySelector('.chev');
+  const open=body.classList.toggle('open');
+  chev.classList.toggle('open',open);
+  if(open&&did&&!body.dataset.init){
+    body.dataset.init='1';
+    renderD(DATA[cid==='os-chips'?'os':cid==='body-chips'?'body':cid==='rel-chips'?'rel':'work'][defaultTheme],did);
+  }
+}
+
+function selTheme(cat,theme,el){
+  const chipId=cat+'-chips';
+  document.querySelectorAll('#'+chipId+' .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderD(DATA[cat][theme],cat+'-d');
+}
+
+function tPh(head){
+  const body=head.nextElementSibling;
+  const chev=head.querySelector('.chev');
+  const open=body.classList.toggle('open');
+  chev.classList.toggle('open',open);
+}
+
+function show(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showInt(id,el){
+  ['iw','ig','ir','iu'].forEach(t=>{const e=document.getElementById(t);if(e)e.style.display=t===id?'block':'none';});
+  document.querySelectorAll('#int-tabs .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
